@@ -94,7 +94,7 @@
 -->
 
 <head>
-  <title>Karbovanets offline wallet generator</title>
+  <title>Talleo offline wallet generator</title>
   <meta charset="UTF-8">
     <style type="text/css">
         html {
@@ -8539,11 +8539,11 @@ return{_strlen:lb,_ge_mul8:Va,_keccak:db,_ge_scalarmult:Ta,_ge_fromfe_frombytes_
 
 var salt = '4721283fee2db41e1f2fc50ea9f6d783'; // IMPORTANT: never change it, otherwise it will be impossible to restore previously generated wallets!
 var config = {
-    coinUnitPlaces: 12,
-    coinSymbol: 'KRB',
-    coinName: 'Karbowanec',
-    coinUriPrefix: 'karbowanec:',
-    addressPrefix: 111
+    coinUnitPlaces: 2,
+    coinSymbol: 'TLO',
+    coinName: 'Talleo',
+    coinUriPrefix: 'talleo:',
+    addressPrefix: 12316
 };
 var cnUtil = (function(initConfig) {
     //var config = $.extend({}, initConfig);
@@ -8735,16 +8735,14 @@ var cnUtil = (function(initConfig) {
         keys.spend = this.generate_keys(first);
         // this is monero style
         // var second = this.keccak(keys.spend.sec, 32, 32);
-        // Karbowanec paperwallet compatible
+        // Talleo paperwallet compatible
         var second = this.keccak(first, 32, 32);
         keys.view = this.generate_keys(second);
         keys.public_addr = this.pubkeys_to_string(keys.spend.pub, keys.view.pub);
 	
 	var prefix = this.encode_varint(CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX);
-  	var privateKeyBase = prefix + keys.spend.pub + keys.view.pub + keys.spend.sec + keys.view.sec; // Karbowanec privateKeyBase
-    var checksum = this.cn_fast_hash(privateKeyBase).slice(0, ADDRESS_CHECKSUM_SIZE * 2);
     
-	keys.privateKeys = cnBase58.encode(privateKeyBase + checksum);
+	keys.privateKeys = keys.spend.pub + keys.view.pub + keys.spend.sec + keys.view.sec;
 		
 		
         return keys;
@@ -8763,7 +8761,7 @@ var cnUtil = (function(initConfig) {
         if (public_addr.toUpperCase().slice(0, prefix.length) != prefix.toUpperCase())
           return null;
         // var second = this.keccak(keys.spend.sec, 32, 32);
-        // Karbowanec paperwallet compatible
+        // Talleo paperwallet compatible
         var second = this.keccak(first, 32, 32);
         keys.view = this.generate_keys(second);
         keys.public_addr = this.pubkeys_to_string(keys.spend.pub, keys.view.pub);
@@ -8771,13 +8769,8 @@ var cnUtil = (function(initConfig) {
 		
 	
 	var prefix = this.encode_varint(CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX);
-  	var privateKeyBase = prefix + keys.spend.pub + keys.view.pub + keys.spend.sec + keys.view.sec; // Karbowanec privateKeyBase
-    var checksum = this.cn_fast_hash(privateKeyBase).slice(0, ADDRESS_CHECKSUM_SIZE * 2);
-    
-	keys.privateKeys = cnBase58.encode(privateKeyBase + checksum);
 	
-	
-	
+	keys.privateKeys = keys.spend.pub + keys.view.pub + keys.spend.sec + keys.view.sec;
 		
         return keys;
     };
@@ -10689,26 +10682,12 @@ html { font-family: sans-serif }
   z-index: 1007;
   display: none;
 }
-
-#coinIcon{
-	text-transform: capitalize;
-	width: 1.3em;
-	height: 1.3em;
-	line-height: 1.2em;
-	display: inline-block;
-	vertical-align: middle;
-	color: #15315e;
-	border: 2px solid #15315e;
-	border-radius: 50%;
-	text-align: center;
-	margin-top: 0px;
-}
 </style>
 
 <nav class="grey lighten-3">
     <div class="nav-wrapper">
         <a href="#" class="brand-logo center">
-			<span id="coinIcon">&#1180;</span> Карбованець
+	    <img src="data:image/png;base64,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">
         </a>
 
     </div>
@@ -10725,10 +10704,10 @@ html { font-family: sans-serif }
     <div class="row">
         <div class="col s12">
             <p>
-                This page generates a new <a href="http://karbowanec.com/">Karbowanec</a> wallet. It is self contained and
+                This page generates a new <a href="https://www.talleo.org/">Talleo</a> wallet. It is self contained and
                 does all the necessary calculations locally, so is suitable for generating a new wallet on a machine
                 that is not connected to the network, and may even never be. This way, you can create
-                a Karbowanec wallet without risking the keys.
+                a Talleo wallet without risking the keys.
             </p>
         </div>
     </div>
@@ -10744,7 +10723,7 @@ html { font-family: sans-serif }
             <form>
                 <input class="btn deep-orange" type="button" onclick="js:genwallet_prefix();" value="Generate wallet with prefix" action="" id="gen_prefix_widget"/>
                 <p>(very slow for more than a few characters)</p>
-                <input type="text" value="K" id="prefix_widget" oninput="js:check_prefix_validity()"; />
+                <input type="text" value="TA" id="prefix_widget" oninput="js:check_prefix_validity()"; />
             </form>
         </div>
     </div>
@@ -10770,7 +10749,7 @@ html { font-family: sans-serif }
                          style="line-height: 25px; height: 25px; font-size: 60%; padding: 0px 1.5rem;"/>
                     </span>
 
-                    <p>This is the address you give to third parties to send Karbo to you.
+                    <p>This is the address you give to third parties to send Talleo to you.
                         <br><b>It is the only information here that's meant to be public.</b>
                     </p>
                 </div>
@@ -10790,9 +10769,6 @@ html { font-family: sans-serif }
                         The mnemonic seed is a string that comprises 25 words and allows you to recreate your
                         private keys. <b>Keep it secure!</b>
                     </p>
-					<p>
-						To restore keys from mnemonic seed use Restore tab in Karbowanec paperwallet at <a href="http://paperwallet.karbowanec.com/">paperwallet.karbowanec.com</a>.
-					</p>
                 </div>
                 <div class="card-action center-align">
                     <h5 class="grey-text text-darken-4" id="mnemonic_widget">Generating... </h5>
@@ -10810,7 +10786,7 @@ html { font-family: sans-serif }
                         The spend key and view key are the raw private keys for the
                         new wallet.
                         
-						<strong>Keys for GUI Wallet</strong> can be imported into wallet in File > Import private key
+						<strong>Keys for GUI Wallet</strong> can be imported into wallet in File > Import key
 						
                     </p>
                     <br>
@@ -10848,7 +10824,7 @@ html { font-family: sans-serif }
             <div class="col l12">
                 <h5>Credits</h5>
                 <p>
-                    Made by moneromooo, based on code from <a href="https://mymonero.com/">MyMonero</a>. Adapted for Karbovanets by Aiw&euml;. Copyright notices in the source.
+                    Made by moneromooo, based on code from <a href="https://mymonero.com/">MyMonero</a>. Adapted for Talleo by mtl1979. Copyright notices in the source.
                     <br>
                     Thanks to antanst for the CSS, and to luigi1111 for crypto fixes and improvements.
                     <br>
@@ -10856,7 +10832,7 @@ html { font-family: sans-serif }
                     <br>
                 <pre>4AfUP827TeRZ1cck3tZThgZbRCEwBrpcJTkA1LCiyFVuMH4b5y59bKMZHGb9y58K3gSjWDCBsB4RkGsGDhsmMG5R2qmbLeW</pre>
 				
-				<pre>KawA9rnrZpTBDXhu5xKrZv7aKnFM4CgX1YxqkRo4k5tVUxMB2yCwhA3eEw7EivcMkChyWF7CwexLjAr5MzJAEDzaLvx2dK1</pre>
+				<pre>TA4yACzMYuFYq7V6xVAWYHeS39jQ8w4mKRowpY6NskGuS1rZpjcWuCpdeCypwUCJrK9mGqVW9o1pY2EG3HW7BZkR2YRcc4YNa</pre>
 
                 </p>
 
@@ -10916,7 +10892,7 @@ function genwallet(lang)
   mnemonic_widget.innerHTML = mnemonic;
 
   qr=new QRCode(address_qr_widget, {correctLevel:QRCode.CorrectLevel.L});
-  qr.makeCode("karbowanec:"+keys.public_addr);
+  qr.makeCode("talleo:"+keys.public_addr);
 }
 
 previous_button_text = "";
@@ -10961,7 +10937,7 @@ function genwallet_prefix_worker()
   wallet_keys_widget.innerHTML = keys.privateKeys;
   
   qr=new QRCode(address_qr_widget, {correctLevel:QRCode.CorrectLevel.L});
-  qr.makeCode("karbowanec:"+keys.public_addr);
+  qr.makeCode("talleo:"+keys.public_addr);
 }
 
 var zerohex="0000000000000000000000000000000000000000000000000000000000000000";
